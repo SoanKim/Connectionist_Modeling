@@ -1,0 +1,8 @@
+tests_pivot = tests.pivot_table(index = ['Participant', 'Instructions'], values = ['hit', 'miss', 'false_alarm', 'correct_reject'], aggfunc=lambda x:x.mean(skipna=1)) 
+tests_pivot['hit_rate'] = tests_pivot['hit']/(tests_pivot['hit']+tests_pivot['miss'])
+tests_pivot['fa_rate'] = tests_pivot['false_alarm']/(tests_pivot['false_alarm']+tests_pivot['correct_reject'])
+tests_pivot['d'] = Z(tests_pivot['hit_rate']) - Z(tests_pivot['fa_rate'])
+tests_pivot['beta'] = np.exp((Z(tests_pivot['fa_rate'])**2-Z(tests_pivot['hit_rate'])**2) / 2)
+tests_pivot['c'] = -(Z(tests_pivot['hit_rate']) + Z(tests_pivot['fa_rate'])) / 2
+tests_pivot['Ad'] = norm.cdf(tests_pivot['d'] / math.sqrt(2))
+tests_pivot['A'] = 0.5+(abs(np.sign(tests_pivot['hit_rate']-tests_pivot['fa_rate'])*((tests_pivot['hit_rate']-tests_pivot['fa_rate']))**2+abs(tests_pivot['hit_rate']-tests_pivot['fa_rate']))/(4*(tests_pivot[['hit_rate','fa_rate']].max(axis=1)))-4*(tests_pivot['hit_rate']*tests_pivot['fa_rate']))
